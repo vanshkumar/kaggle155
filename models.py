@@ -7,10 +7,9 @@ from sklearn.ensemble import RandomForestClassifier
 import dataIO as data
 
 def gaussianNBayes(x, y, x_predict):
-    '''Gaussian Naive Bayes algorithm.  Input is xlabes, ylabels, and the data
-    you want to predict on.  Returns and array of predictions'''
+    '''Gaussian Naive Bayes algorithm.  Input is xlabels, ylabels, and the data
+    you want to predict on.  Returns an array of predictions'''
     gnb = GaussianNB()
-    training_data = data.loadTraining()
     y_pred = gnb.fit(x, y).predict(x_predict)
     return y_pred 
 

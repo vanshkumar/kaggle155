@@ -4,7 +4,7 @@ import numpy as np
 
 def loadTraining():
     # works if the word sentiment folder and kaggle folder are in the same dir
-    path = os.getcwd()[:-9] + 'WordSentiment/'
+    path = os.getcwd()[:-7] + 'WordSentiment/'
     f = open(path + 'training_data.txt', 'r')
     lines = f.readlines()
     lines = [x.split('|') for x in lines]
@@ -19,7 +19,7 @@ def loadTraining():
 
 
 def loadTest():
-    path = os.getcwd()[:-9] + 'WordSentiment/'
+    path = os.getcwd()[:-7] + 'WordSentiment/'
     f = open(path + 'testing_data.txt', 'r')
     lines = f.readlines()
     lines = [x.split('|') for x in lines]
@@ -28,6 +28,3 @@ def loadTest():
     lines = np.array([[int(x) for x in row] for row in lines])
     f.close()
     return {'words': words, 'xlabels': lines}
-    
-
-
