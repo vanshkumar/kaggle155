@@ -13,7 +13,8 @@ def loadTraining():
     ylabels = [x[-1].rstrip() for x in lines]
     xlabels = [x[:-1] for x in lines]
     # converts all the values to ints instead of strings
-    xlabels = np.array([[int(x) for x in row] for row in xlabels])
+    xlabels = np.array([[float(x) for x in row] for row in xlabels])
+    ylabels = np.array([float(x) for x in ylabels])
     f.close()
     return {'words': words, 'xlabels': xlabels, 'ylabels': ylabels}
 
@@ -25,6 +26,6 @@ def loadTest():
     lines = [x.split('|') for x in lines]
     words = lines[0]
     lines.remove(lines[0])
-    lines = np.array([[int(x) for x in row] for row in lines])
+    lines = np.array([[float(x) for x in row] for row in lines])
     f.close()
     return {'words': words, 'xlabels': lines}
