@@ -7,7 +7,6 @@ from sklearn import cross_validation
 from sklearn.metrics import make_scorer
 import dataIO as data
 
-
 full_train = data.loadTraining()
 x_train = full_train['xlabels']
 y_train = full_train['ylabels']
@@ -27,11 +26,16 @@ cross_val_scores = cross_validation.cross_val_score(estimator=gnb,\
 print "cross val scores: "
 print cross_val_scores
 
-f = open('gnb_class.csv', 'w+')
+f = open('gnb_class_test.csv', 'w+')
 f.write('Id,Prediction\n')
-
 y_test = gnb.predict(x_test)
 for i in range(len(y_test)):
     f.write(str(i+1) + ',' + str(y_test[i]) + '\n')
-
 f.close()
+
+h = open('gnb_class_train.csv', 'w+')
+h.write('Id,Prediction\n')
+y_train_est = gnb.predict(x_train)
+for i in range(len(y_train_est)):
+  h.write(str(i+1) + ',' + str(y_train_est[i]) + '\n')
+h.close()

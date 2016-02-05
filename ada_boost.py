@@ -4,7 +4,6 @@ import os
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.grid_search import GridSearchCV
 from sklearn import cross_validation
-from sklearn.metrics import make_scorer
 import dataIO as data
 
 
@@ -33,15 +32,20 @@ cross_val_scores = cross_validation.cross_val_score(estimator=ada_class,\
 print "cross val scores: "
 print cross_val_scores
 
-f = open('ada_submission.csv', 'w+')
+f = open('ada_regress_test.csv', 'w+')
 f.write('Id,Prediction\n')
-
 y_test = ada_class.predict(x_test)
 for i in range(len(y_test)):
     f.write(str(i+1) + ',' + str(y_test[i]) + '\n')
-
 f.close()
 
-g = open('ada_params.txt', 'w+')
+g = open('ada_regress_params.txt', 'w+')
 g.write(str(ada_class.best_estimator_.get_params()))
 g.close()
+
+h = open('ada_regress_train.csv', 'w+')
+h.write('Id,Prediction\n')
+y_test_est = ada_class.predict(x_train)
+for i in range(len(y_test_est)):
+    h.write(str(i+1) + ',' + str(y_test_est[i]) + '\n')
+h.close()
