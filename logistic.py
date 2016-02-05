@@ -12,7 +12,7 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'C': np.logspace(-3, 1, 50),
+parameters = {'C': np.logspace(-4, 1.5, 100),
 # [x/100.0 for x in range(1, 30, 15)],
               'solver' : ['newton-cg', 'lbfgs', 'liblinear']
               }
@@ -35,7 +35,7 @@ f = open('log_regress_test.csv', 'w+')
 f.write('Id,Prediction\n')
 y_test = log_class.predict_proba(x_test)
 for i in range(len(y_test)):
-    f.write(str(i+1) + ',' + str(y_test[i]) + '\n')
+    f.write(str(i+1) + ',' + str(y_test[i][1]) + '\n')
 f.close()
 
 g = open('log_regress_params.txt', 'w+')
@@ -46,5 +46,5 @@ h = open('log_regress_train.csv', 'w+')
 h.write('Id,Prediction\n')
 y_test_est = log_class.predict_proba(x_train)
 for i in range(len(y_test_est)):
-    h.write(str(i+1) + ',' + str(y_test_est[i]) + '\n')
+    h.write(str(i+1) + ',' + str(y_test_est[i][1]) + '\n')
 h.close()
