@@ -12,8 +12,8 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'C': np.logspace(-5.0, 5.0, 20),
-              'kernel': ('linear', 'poly', 'rbf', 'sigmoid'),
+parameters = {'C': np.logspace(-4.0, 4.0, 10),
+              'kernel': ('linear', 'poly', 'rbf'),
               'degree': range(2, 6),
               }
 
