@@ -31,7 +31,7 @@ cross_val_scores = cross_validation.cross_val_score(estimator=svm_class,\
 print "cross val scores: "
 print cross_val_scores
 
-f = open('svm_submission.csv', 'w+')
+f = open('svm_class.csv', 'w+')
 f.write('Id,Prediction\n')
 
 y_test = svm_class.predict(x_test)

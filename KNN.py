@@ -13,9 +13,9 @@ full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
 parameters = {'n_neighbors': range(2, 30, 3),
-              'weights': ('uniform', 'distance'),
-              'algorithm': ('auto', 'ball_tree', 'kd_tree', 'brute'),
-              'leaf_size': range(15, 45, 5)
+              # 'weights': ('uniform', 'distance'),
+              'algorithm': ('auto', 'ball_tree', 'kd_tree', 'brute')
+              # 'leaf_size': range(15, 45, 5)
               }
 
 kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
