@@ -1,8 +1,10 @@
 import dataIO as data
 import numpy as np
 
-fname = raw_input('Enter file name: ') 
-print fname
+# File name should not include the extension (but it should be in .csv format in the folder)
+# Format of file name should be estimatorname_regressorclass_trainortest
+# Examples: ada_regress_train, gnb_class_test
+fname = raw_input('Enter file name: ')
 
 regress_data = open(fname+'.csv', 'r+')
 class_data   = open(fname[:fname.index('_')] + str('_r2c_') + \
