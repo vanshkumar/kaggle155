@@ -1,5 +1,6 @@
 import os 
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 
 
 def loadTraining():
@@ -16,6 +17,7 @@ def loadTraining():
     xlabels = np.array([[float(x) for x in row] for row in xlabels])
     ylabels = np.array([float(x) for x in ylabels])
     f.close()
+    xlabels = StandardScaler().fit_transform(xlabels)
     return {'words': words, 'xlabels': xlabels, 'ylabels': ylabels}
 
 
@@ -28,4 +30,5 @@ def loadTest():
     lines.remove(lines[0])
     lines = np.array([[float(x) for x in row] for row in lines])
     f.close()
+    lines = StandardScaler().fit_transform(lines)
     return {'words': words, 'xlabels': lines}
