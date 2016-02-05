@@ -32,7 +32,7 @@ cross_val_scores = cross_validation.cross_val_score(estimator=knn_class,\
 print "cross val scores: "
 print cross_val_scores
 
-f = open('knn_submission.csv', 'w+')
+f = open('knn_class.csv', 'w+')
 f.write('Id,Prediction\n')
 
 y_test = knn_class.predict(x_test)
