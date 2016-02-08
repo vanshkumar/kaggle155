@@ -1,11 +1,11 @@
 import sklearn 
 import numpy as np
 import os 
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.grid_search import GridSearchCV
 from grid_search import grid_search
 from sklearn import cross_validation
-import datetime
+import time
 import dataIO as data
 
 
@@ -21,16 +21,18 @@ parameters = {'n_neighbors': range(2, 38, 5),
               # 'leaf_size': range(15, 45, 5)
               }
 
+np.random.seed(int(time.clock()*1000000))
+
 kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
-      shuffle=True, random_state=datetime.time().second)
+      shuffle=True)
 
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
-                                test_size=0.5, random_state=datetime.time().second)
+                                test_size=0.2)
 
 x2, x3, y2, y3 = cross_validation.train_test_split(x_23, y_23,\
-                                test_size=0.5, random_state=datetime.time().second)
+                                test_size=0.5)
 
-knn_class, val_score = grid_search(KNeighborsRegressor(), parameters,\
+knn_class, val_score = grid_search(KNeighborsClassifier(), parameters,\
                               x1, y1, x2, y2)
 
 print "Validation score: "
@@ -38,8 +40,8 @@ print val_score
 
 print "Test score: "
 print knn_class.score(x3, y3)
-
-# knn_class = GridSearchCV(estimator=KNeighborsRegressor(), \
+KNeighborsClassifier
+# knn_class = GridSearchCV(estimator=KNeighborsClassifier(), \
 #     param_grid=dict(parameters), n_jobs=1, cv=None)
 
 # knn_class.fit(x_train, y_train) 

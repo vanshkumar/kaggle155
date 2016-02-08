@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.grid_search import GridSearchCV
 from grid_search import grid_search
 from sklearn import cross_validation
-import datetime
+import time
 import dataIO as data
 
 full_train = data.loadTraining()
@@ -18,14 +18,16 @@ parameters = {'C': np.logspace(-4, 1.5, 20),
               'solver' : ['newton-cg', 'lbfgs', 'liblinear']
               }
 
+np.random.seed(int(time.clock()*1000000))
+
 kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
-      shuffle=True, random_state=datetime.time().second)
+      shuffle=True)
 
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
-                                test_size=0.5, random_state=datetime.time().second)
+                                test_size=0.2)
 
 x2, x3, y2, y3 = cross_validation.train_test_split(x_23, y_23,\
-                                test_size=0.5, random_state=datetime.time().second)
+                                test_size=0.5)
 
 log_class, val_score = grid_search(LogisticRegression(), parameters,\
                               x1, y1, x2, y2)
@@ -51,7 +53,7 @@ f = open('log_regress_test.csv', 'w+')
 f.write('Id,Prediction\n')
 y_test = log_class.predict_proba(x_test)
 for i in range(len(y_test)):
-    f.write(str(i+1) + ',' + str(y_test[i][1]) + '\n')
+    f.write(str(i+1) + ',' + str(int(y_test[i][1] >= 0.5)) + '\n')
 f.close()
 
 g = open('log_regress_params.txt', 'w+')
@@ -62,5 +64,5 @@ h = open('log_regress_train.csv', 'w+')
 h.write('Id,Prediction\n')
 y_test_est = log_class.predict_proba(x_train)
 for i in range(len(y_test_est)):
-    h.write(str(i+1) + ',' + str(y_test_est[i][1]) + '\n')
+    h.write(str(i+1) + ',' + str(int(y_test_est[i][1] >= 0.5)) + '\n')
 h.close()
