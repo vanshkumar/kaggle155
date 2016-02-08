@@ -2,8 +2,10 @@ import sklearn
 import numpy as np
 import os 
 from sklearn.svm import SVR
+from grid_search import grid_search
 from sklearn.grid_search import GridSearchCV
 from sklearn import cross_validation
+import datetime
 import dataIO as data
 
 full_train = data.loadTraining()
@@ -18,13 +20,29 @@ parameters = {'kernel': ('poly', 'rbf', 'sigmoid'),
               'shrinking': (True, False)
               }
 
+
 kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
-      shuffle=True, random_state=4)
+      shuffle=True, random_state=datetime.time().second)
 
-svm_class = GridSearchCV(estimator=SVR(), \
-    param_grid=dict(parameters), n_jobs=4, cv=None)
+x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
+                                test_size=0.5, random_state=datetime.time().second)
 
-svm_class.fit(x_train, y_train)
+x2, x3, y2, y3 = cross_validation.train_test_split(x_23, y_23,\
+                                test_size=0.5, random_state=datetime.time().second)
+
+svm_class, val_score = grid_search(SVR(), parameters,\
+                              x1, y1, x2, y2)
+
+print "Validation score: "
+print val_score
+
+print "Test score: "
+print svm_class.score(x3, y3)
+
+# svm_class = GridSearchCV(estimator=SVR(), \
+#     param_grid=dict(parameters), n_jobs=4, cv=None)
+
+# svm_class.fit(x_train, y_train)
 
 cross_val_scores = cross_validation.cross_val_score(estimator=svm_class,\
     X=x_train, y=y_train, cv=kf_total, n_jobs=1)
@@ -32,18 +50,18 @@ cross_val_scores = cross_validation.cross_val_score(estimator=svm_class,\
 print "cross val scores: "
 print cross_val_scores
 
-f = open('svm2_regress_test.csv', 'w+')
+f = open('svm_regress_test.csv', 'w+')
 f.write('Id,Prediction\n')
 y_test = svm_class.predict(x_test)
 for i in range(len(y_test)):
     f.write(str(i+1) + ',' + str(y_test[i]) + '\n')
 f.close()
 
-g = open('svm2_regress_params.txt', 'w+')
+g = open('svm_regress_params.txt', 'w+')
 g.write(str(svm_class.best_estimator_.get_params()))
 g.close()
 
-h = open('svm2_regress_train.csv', 'w+')
+h = open('svm_regress_train.csv', 'w+')
 h.write('Id,Prediction\n')
 y_test_est = svm_class.predict(x_train)
 for i in range(len(y_test_est)):
