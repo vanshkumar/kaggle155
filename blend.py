@@ -65,7 +65,7 @@ print cross_val_scores
 
 y_test = svm_class.predict(x_test)
 
-g = open('svm_regress_params.txt', 'w+')
+g = open('svm_blend_params.txt', 'w+')
 g.write(str(svm_class.best_estimator_.get_params()))
 g.close()
 
