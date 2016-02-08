@@ -12,20 +12,20 @@ from grid_search import grid_search
 def loadModelOut(filename):	
 	return np.loadtxt(filename, delimiter=',', skiprows=1, unpack=True)[1]
 
-trainingDataFiles = ['ada_regress_train.csv', 
-					 'gnb_class_train.csv', 
+trainingDataFiles = [
+                     # 'ada_regress_train.csv',
 					 'knn_regress_train.csv', 
-					 # 'log_regress_train.csv', 
+					 'log_regress_train.csv', 
 					 # 'nn_class_train.csv',
 					 'rf12_regress_train.csv',
 					 # 'rf_regress_train_2.csv',
 					 # 'svm_regress_train.csv'
 					 ]
 
-testDataFiles = ['ada_regress_test.csv', 
-				 'gnb_class_test.csv', 
+testDataFiles = [
+                 # 'ada_regress_test.csv',
 				 'knn_regress_test.csv', 
-				 # 'log_regress_test.csv', 
+				 'log_regress_test.csv', 
 				 # 'nn_class_test.csv',
 				 'rf12_regress_test.csv',
 				 # 'rf_regress_test_2.csv',

@@ -3,8 +3,11 @@ import numpy as np
 import os 
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.grid_search import GridSearchCV
+from grid_search import grid_search
 from sklearn import cross_validation
+import datetime
 import dataIO as data
+
 
 full_train = data.loadTraining()
 x_train = full_train['xlabels']
@@ -12,19 +15,34 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'n_neighbors': range(2, 35, 3),
+parameters = {'n_neighbors': range(2, 38, 5),
               'weights': ('uniform', 'distance'),
-              # 'algorithm': ('auto', 'ball_tree', 'kd_tree', 'brute')
+              'algorithm': ('auto', 'ball_tree', 'kd_tree')
               # 'leaf_size': range(15, 45, 5)
               }
 
 kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
-      shuffle=True, random_state=4)
+      shuffle=True, random_state=datetime.time().second)
 
-knn_class = GridSearchCV(estimator=KNeighborsRegressor(), \
-    param_grid=dict(parameters), n_jobs=1, cv=None)
+x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
+                                test_size=0.5, random_state=datetime.time().second)
 
-knn_class.fit(x_train, y_train) 
+x2, x3, y2, y3 = cross_validation.train_test_split(x_23, y_23,\
+                                test_size=0.5, random_state=datetime.time().second)
+
+knn_class, val_score = grid_search(KNeighborsRegressor(), parameters,\
+                              x1, y1, x2, y2)
+
+print "Validation score: "
+print val_score
+
+print "Test score: "
+print knn_class.score(x3, y3)
+
+# knn_class = GridSearchCV(estimator=KNeighborsRegressor(), \
+#     param_grid=dict(parameters), n_jobs=1, cv=None)
+
+# knn_class.fit(x_train, y_train) 
 
 cross_val_scores = cross_validation.cross_val_score(estimator=knn_class,\
     X=x_train, y=y_train, cv=kf_total, n_jobs=1)
@@ -40,7 +58,7 @@ for i in range(len(y_test)):
 f.close()
 
 g = open('knn_regress_params.txt', 'w+')
-g.write(str(knn_class.best_estimator_.get_params()))
+g.write(str(knn_class.get_params()))
 g.close()
 
 h = open('knn_regress_train.csv', 'w+')

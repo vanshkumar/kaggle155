@@ -14,10 +14,11 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'kernel': ('poly', 'rbf', 'sigmoid'),
+parameters = {'C': np.logspace(-2, 2, 10),
+              'kernel': ('poly', 'rbf'),
               'degree': range(2, 7),
-              'epsilon': np.logspace(-2, 0, 10),
-              'shrinking': (True, False)
+              # 'epsilon': np.logspace(-2, 0, 10),
+              # 'shrinking': (True, False)
               }
 
 
@@ -58,7 +59,7 @@ for i in range(len(y_test)):
 f.close()
 
 g = open('svm_regress_params.txt', 'w+')
-g.write(str(svm_class.best_estimator_.get_params()))
+g.write(str(svm_class.get_params()))
 g.close()
 
 h = open('svm_regress_train.csv', 'w+')

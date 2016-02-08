@@ -22,8 +22,6 @@ def grid_search(estim, params, x_dev, y_dev, x_val, y_val):
 
         score = estim.score(x_val, y_val)
 
-        # print score
-
         if score > best_score:
             best_combo = combo
             best_score = score
