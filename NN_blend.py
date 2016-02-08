@@ -14,7 +14,7 @@ trainingDataFiles = ['ada_regress_train.csv',
                      'gnb_class_train.csv', 
                      'knn_regress_train.csv', 
                      'log_regress_train.csv', 
-                     # 'nn_class_train.csv',
+                     'nn_class_train.csv',
                      'rf_regress_train.csv',
                      'rf_regress_train_2.csv',
                      'svm_regress_train.csv'
@@ -24,7 +24,7 @@ testDataFiles = ['ada_regress_test.csv',
                  'gnb_class_test.csv', 
                  'knn_regress_test.csv', 
                  'log_regress_test.csv', 
-                 # 'nn_class_test.csv',
+                 'nn_class_test.csv',
                  'rf_regress_test.csv',
                  'rf_regress_test_2.csv',
                  'svm_regress_test.csv'
@@ -40,12 +40,12 @@ x_test = np.transpose([loadModelOut(model) for model in testDataFiles])
 
 in_layer = len(trainingDataFiles)
 
-parameters = {'hidden_layer_sizes': ((in_layer,), (in_layer, in_layer/2)), #(in_layer, 2*in_layer/3, in_layer/3)),
-              'alpha': np.logspace(-5, -3, 5),
+parameters = {'hidden_layer_sizes': ((in_layer,), (in_layer, in_layer/2), (in_layer, 2*in_layer/3, in_layer/3)),
+              'alpha': np.logspace(-5, -3, 15),
               'learning_rate': ('constant', 'invscaling')
               }
 
-kf_total = cross_validation.KFold(len(x_train), n_folds=5,\
+kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
       shuffle=True, random_state=4)
 
 nn_class = GridSearchCV(estimator=MLPClassifier(), \
