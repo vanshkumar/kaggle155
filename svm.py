@@ -22,7 +22,7 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
       shuffle=True, random_state=4)
 
 svm_class = GridSearchCV(estimator=SVR(), \
-    param_grid=dict(parameters), n_jobs=-1, cv=None)
+    param_grid=dict(parameters), n_jobs=4, cv=None)
 
 svm_class.fit(x_train, y_train)
 
