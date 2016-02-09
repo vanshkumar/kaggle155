@@ -15,7 +15,7 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'C': np.logspace(-3, 3, 15),
+parameters = {'C': np.logspace(-4, -1, 5),
               'kernel': ['rbf'],
               # 'degree': range(2, 4),
               # 'epsilon': np.logspace(-2, 0, 10),
@@ -48,12 +48,15 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
 
 # Grid search CV - make sure cv = # of parameters combos
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
-                                test_size=0.05)
+                                test_size=0.1)
 
 svm_class = GridSearchCV(estimator=SVC(), \
-    param_grid=dict(parameters), n_jobs=1, cv=num_folds)
+    param_grid=dict(parameters), n_jobs=6, cv=num_folds)
 
 svm_class.fit(x1, y1)
+
+print "Training score: "
+print svm_class.score(x1, y1)
 
 print "Test score : "
 print svm_class.score(x_23, y_23)
@@ -76,7 +79,7 @@ for i in range(len(y_test)):
 f.close()
 
 g = open('svm_regress_params.txt', 'w+')
-g.write(str(svm_class.get_params()))
+g.write(str(svm_class.best_estimator_.get_params()))
 g.close()
 
 x_all_train = data.allTrain()['xlabels']

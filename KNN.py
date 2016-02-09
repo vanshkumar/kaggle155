@@ -15,7 +15,7 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'n_neighbors': range(5, 36, 15),
+parameters = {'n_neighbors': range(5, 26, 10),
               'weights': ('uniform', 'distance'),
               'algorithm': ('auto', 'ball_tree', 'kd_tree')
               # 'leaf_size': range(15, 45, 5)
@@ -47,12 +47,15 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
 
 # Grid search CV - make sure cv = # of parameters combos
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
-                                test_size=0.05)
+                                test_size=0.1)
 
 knn_class = GridSearchCV(estimator=KNeighborsClassifier(), \
-    param_grid=dict(parameters), n_jobs=1, cv=None)
+    param_grid=dict(parameters), n_jobs=1, cv=num_folds)
 
 knn_class.fit(x1, y1)
+
+print "Training score: "
+print knn_class.score(x1, y1)
 
 print "Test score : "
 print knn_class.score(x_23, y_23)
@@ -75,7 +78,7 @@ for i in range(len(y_test)):
 f.close()
 
 g = open('knn_regress_params.txt', 'w+')
-g.write(str(knn_class.get_params()))
+g.write(str(knn_class.best_estimator_.get_params()))
 g.close()
 
 x_all_train = data.allTrain()['xlabels']

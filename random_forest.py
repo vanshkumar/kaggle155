@@ -15,11 +15,12 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'n_estimators': range(5, 36, 15),
+parameters = {'n_estimators': range(3, 10, 3),
               'criterion': ('gini', 'entropy'),
               # 'max_features': ('auto', 'sqrt', 'log2'),
+              'min_samples_leaf': (30, 250)
               # 'max_depth': (3, 5, None),
-              'min_samples_split': (8, 11, 14),
+              # 'min_samples_split': (50, 68, 85),
               # 'bootstrap': ('True', 'False')
              }
 
@@ -50,12 +51,15 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
 
 # Grid search CV - make sure cv = # of parameters combos
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
-                                test_size=0.05)
+                                test_size=0.1)
 
 rf_class = GridSearchCV(estimator=RandomForestClassifier(), \
-    param_grid=dict(parameters), n_jobs=1, cv=num_folds)
+    param_grid=dict(parameters), n_jobs=2, cv=num_folds)
 
 rf_class.fit(x1, y1)
+
+print "Training score: "
+print rf_class.score(x1, y1)
 
 print "Test score : "
 print rf_class.score(x_23, y_23)
@@ -78,7 +82,7 @@ for i in range(len(y_test)):
 f.close()
 
 g = open('rf_regress_params.txt', 'w+')
-g.write(str(rf_class.get_params()))
+g.write(str(rf_class.best_estimator_.get_params()))
 g.close()
 
 x_all_train = data.allTrain()['xlabels']

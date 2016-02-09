@@ -16,7 +16,7 @@ def loadModelOut(filename, model_size):
 
 trainingDataFiles = [
                      'ada_regress_train.csv',
-					 'knn_regress_train.csv', 
+					 # 'knn_regress_train.csv', 
 					 'log_regress_train.csv', 
 					 # 'nn_class_train.csv',
 					 'rf_regress_train.csv',
@@ -25,7 +25,7 @@ trainingDataFiles = [
 
 testDataFiles = [
                  'ada_regress_test.csv',
-				 'knn_regress_test.csv', 
+				 # 'knn_regress_test.csv', 
 				 'log_regress_test.csv', 
 				 # 'nn_class_test.csv',
 				 'rf_regress_test.csv',
@@ -38,15 +38,9 @@ y_blend_train = data.loadTrainingBlend()['ylabels']
 x_blend_train = np.zeros((len(trainingDataFiles), len(y_blend_train)))
 x_blend_train = np.transpose([loadModelOut(model, model_size) for model in trainingDataFiles])
 
-print x_blend_train.shape
-print len(y_blend_train)
-
 x_all = len(data.allTest()['xlabels'])
-print x_all
 x_test = np.zeros((len(testDataFiles), x_all))
 x_test = np.transpose([loadModelOut(model, 0) for model in testDataFiles])
-
-print x_test.shape
 
 parameters = {'C': np.logspace(-4.0, 4.0, 20),
               # 'kernel': ['rbf'],
@@ -57,7 +51,7 @@ parameters = {'C': np.logspace(-4.0, 4.0, 20),
 
 np.random.seed(int(time.clock()*1000000))
 
-kf_total = cross_validation.KFold(len(x_blend_train), n_folds=5,\
+kf_total = cross_validation.KFold(len(x_blend_train), n_folds=10,\
       shuffle=True)
 
 # x_dev, x_val, y_dev, y_val = cross_validation.train_test_split(x_blend_train, y_blend_train,\
@@ -83,13 +77,16 @@ kf_total = cross_validation.KFold(len(x_blend_train), n_folds=5,\
 
 
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_blend_train, y_blend_train,\
-                                test_size=0.15)
+                                test_size=0.1)
 
-svm_class = SVC(kernel='linear', C=0.1)
+svm_class = SVC(kernel='linear')
 
 svm_class.fit(x1, y1)
 
 val_score = svm_class.score(x_23, y_23)
+
+print "Training score: "
+print svm_class.score(x1, y1)
 
 print "Validation score: "
 print val_score
@@ -104,8 +101,14 @@ print 'done fit'
 cross_val_scores = cross_validation.cross_val_score(estimator=svm_class,\
     X=x_blend_train, y=y_blend_train, cv=kf_total, n_jobs=-1)
 
-print "cross val scores: "
-print cross_val_scores
+print "min cross val score: "
+print np.min(cross_val_scores)
+
+print "mean cross val score: "
+print np.mean(cross_val_scores)
+
+print "std dev cross val score: "
+print np.std(cross_val_scores)
 
 y_test = svm_class.predict(x_test)
 

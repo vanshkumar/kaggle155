@@ -15,8 +15,8 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'C': np.logspace(-3, 1.5, 5),
-              'solver' : ['newton-cg', 'lbfgs', 'liblinear']
+parameters = {'C': np.logspace(-10, -5, 15),
+              # 'solver' : ['newton-cg', 'lbfgs', 'liblinear']
               }
 
 num_folds = np.prod(np.array([len(parameters[key]) for key in parameters]))
@@ -45,12 +45,15 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
 
 # Grid search CV - make sure cv = # of parameters combos
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
-                                test_size=0.05)
+                                test_size=0.1)
 
 log_class = GridSearchCV(estimator=LogisticRegression(), \
-    param_grid=dict(parameters), n_jobs=1, cv=None)
+    param_grid=dict(parameters), n_jobs=4, cv=num_folds)
 
 log_class.fit(x1, y1)
+
+print "Training score: "
+print np.mean(y1 == np.array(log_class.predict_proba(x1)[:, 1] >= 0.5, dtype=int))
 
 print "Test score : "
 print np.mean(y_23 == np.array(log_class.predict_proba(x_23)[:, 1] >= 0.5, dtype=int))
@@ -73,7 +76,7 @@ for i in range(len(y_test)):
 f.close()
 
 g = open('log_regress_params.txt', 'w+')
-g.write(str(log_class.get_params()))
+g.write(str(log_class.best_estimator_.get_params()))
 g.close()
 
 x_all_train = data.allTrain()['xlabels']
