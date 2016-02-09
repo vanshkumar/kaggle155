@@ -20,8 +20,8 @@ def allTrain():
     ylabels = np.array([float(x) for x in ylabels])
     f.close()
     xlabels = StandardScaler().fit_transform(xlabels)
-    pca = PCA(n_components=2*xlabels.shape[1]/3)
-    xlabels = pca.fit_transform(xlabels)
+    # pca = PCA(n_components=2*xlabels.shape[1]/3)
+    # xlabels = pca.fit_transform(xlabels)
     return {'xlabels': xlabels, 'ylabels': ylabels}
 
 def allTest():
@@ -34,8 +34,8 @@ def allTest():
     lines = np.array([[float(x) for x in row] for row in lines])
     f.close()
     lines = StandardScaler().fit_transform(lines)
-    pca = PCA(n_components=2*lines.shape[1]/3)
-    lines = pca.fit_transform(lines)
+    # pca = PCA(n_components=2*lines.shape[1]/3)
+    # lines = pca.fit_transform(lines)
     return {'xlabels': lines}
 
 
