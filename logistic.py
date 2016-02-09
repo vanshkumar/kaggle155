@@ -15,7 +15,7 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'C': np.logspace(-10, -5, 15),
+parameters = {'C': np.logspace(-8, -5, 15),
               # 'solver' : ['newton-cg', 'lbfgs', 'liblinear']
               }
 
@@ -50,6 +50,8 @@ x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
 log_class = GridSearchCV(estimator=LogisticRegression(), \
     param_grid=dict(parameters), n_jobs=4, cv=num_folds)
 
+# log_class = LogisticRegression(C=9e-6)
+
 log_class.fit(x1, y1)
 
 print "Training score: "
@@ -59,20 +61,14 @@ print "Test score : "
 print np.mean(y_23 == np.array(log_class.predict_proba(x_23)[:, 1] >= 0.5, dtype=int))
 
 
-# cross_val_scores = cross_validation.cross_val_score(estimator=log_class,\
-#     X=x_train, y=y_train, cv=kf_total, n_jobs=1)
-
-# print "cross val scores: "
-# print cross_val_scores
-
-
 x_all_test = data.allTest()['xlabels']
 
 f = open('log_regress_test.csv', 'w+')
 f.write('Id,Prediction\n')
 y_test = log_class.predict_proba(x_all_test)
 for i in range(len(y_test)):
-    f.write(str(i+1) + ',' + str(int(y_test[i][1] >= 0.5)) + '\n')
+    f.write(str(i+1) + ',' + str(y_test[i][1]) + '\n')
+    # f.write(str(i+1) + ',' + str(int(y_test[i][1] >= 0.5)) + '\n')
 f.close()
 
 g = open('log_regress_params.txt', 'w+')
@@ -85,5 +81,6 @@ h = open('log_regress_train.csv', 'w+')
 h.write('Id,Prediction\n')
 y_test_est = log_class.predict_proba(x_all_train)
 for i in range(len(y_test_est)):
-    h.write(str(i+1) + ',' + str(int(y_test_est[i][1] >= 0.5)) + '\n')
+    h.write(str(i+1) + ',' + str(y_test_est[i][1]) + '\n')
+    # h.write(str(i+1) + ',' + str(int(y_test_est[i][1] >= 0.5)) + '\n')
 h.close()

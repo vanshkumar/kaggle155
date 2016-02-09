@@ -2,6 +2,7 @@ import sklearn
 import numpy as np
 import os 
 from sklearn.svm import SVC
+from sklearn.svm import SVR
 from grid_search import grid_search
 from sklearn.grid_search import GridSearchCV
 from sklearn import cross_validation
@@ -15,7 +16,7 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'C': np.logspace(-4, -1, 5),
+parameters = {'C': np.logspace(-4, -1, 12),
               'kernel': ['rbf'],
               # 'degree': range(2, 4),
               # 'epsilon': np.logspace(-2, 0, 10),
@@ -50,23 +51,18 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
                                 test_size=0.1)
 
-svm_class = GridSearchCV(estimator=SVC(), \
+svm_class = GridSearchCV(estimator=SVR(), \
     param_grid=dict(parameters), n_jobs=6, cv=num_folds)
+
+# svm_class = SVC(C=1e-1, kernel='rbf')
 
 svm_class.fit(x1, y1)
 
 print "Training score: "
-print svm_class.score(x1, y1)
+print np.mean(y1 == np.array(svm_class.predict(x1) >= 0.5, dtype=int))
 
 print "Test score : "
-print svm_class.score(x_23, y_23)
-
-
-# cross_val_scores = cross_validation.cross_val_score(estimator=svm_class,\
-#     X=x_train, y=y_train, cv=kf_total, n_jobs=1)
-
-# print "cross val scores: "
-# print cross_val_scores
+print np.mean(y_23 == np.array(svm_class.predict(x_23) >= 0.5, dtype=int))
 
 
 x_all_test = data.allTest()['xlabels']

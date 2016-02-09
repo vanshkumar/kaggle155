@@ -83,20 +83,27 @@ svm_class = SVC(kernel='linear')
 
 svm_class.fit(x1, y1)
 
-val_score = svm_class.score(x_23, y_23)
-
 print "Training score: "
 print svm_class.score(x1, y1)
 
 print "Validation score: "
-print val_score
+print svm_class.score(x_23, y_23)
+
+# vote_train = np.sum(x1, axis=1) >= 2
+# vote_val = np.sum(x_23, axis=1) >= 2
+
+# print "Training score: "
+# print np.mean(vote_train == y1)
+
+# print "Validation score: "
+# print np.mean(vote_val == y_23)
 
 # svm_class = GridSearchCV(estimator=SVC(), \
 #     param_grid=dict(parameters), n_jobs=-1, cv=None)
 
 # svm_class.fit(x_blend_train, y_blend_train)
 
-print 'done fit'
+# print 'done fit'
 
 cross_val_scores = cross_validation.cross_val_score(estimator=svm_class,\
     X=x_blend_train, y=y_blend_train, cv=kf_total, n_jobs=-1)
@@ -115,6 +122,8 @@ y_test = svm_class.predict(x_test)
 g = open('svm_blend_params.txt', 'w+')
 g.write(str(svm_class.get_params()))
 g.close()
+
+# y_test = np.sum(x_test, axis=1) >= 2
 
 f = open('blended_solution.csv', 'w+')
 f.write('Id,Prediction\n')

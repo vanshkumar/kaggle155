@@ -1,7 +1,8 @@
-import sklearn 
+import sklearn
 import numpy as np
-import os 
+import os
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.grid_search import GridSearchCV
 from grid_search import grid_search
 from sklearn import cross_validation
@@ -16,10 +17,10 @@ full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
 parameters = {'n_estimators': range(3, 10, 3),
-              'criterion': ('gini', 'entropy'),
+              # 'criterion': ('gini', 'entropy'),
               # 'max_features': ('auto', 'sqrt', 'log2'),
-              'min_samples_leaf': (30, 250)
-              # 'max_depth': (3, 5, None),
+              'min_samples_leaf': (30, 250),
+              'max_depth': (3, 5, 8),
               # 'min_samples_split': (50, 68, 85),
               # 'bootstrap': ('True', 'False')
              }
@@ -53,23 +54,18 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
                                 test_size=0.1)
 
-rf_class = GridSearchCV(estimator=RandomForestClassifier(), \
+rf_class = GridSearchCV(estimator=RandomForestRegressor(), \
     param_grid=dict(parameters), n_jobs=2, cv=num_folds)
+
+# rf_class = RandomForestClassifier(n_estimators=5, min_samples_leaf=40)
 
 rf_class.fit(x1, y1)
 
 print "Training score: "
-print rf_class.score(x1, y1)
+print np.mean(y1 == np.array(rf_class.predict(x1) >= 0.5, dtype=int))
 
 print "Test score : "
-print rf_class.score(x_23, y_23)
-
-
-# cross_val_scores = cross_validation.cross_val_score(estimator=rf_class,\
-#     X=x_train, y=y_train, cv=kf_total, n_jobs=1)
-
-# print "cross val scores: "
-# print cross_val_scores
+print np.mean(y_23 == np.array(rf_class.predict(x_23) >= 0.5, dtype=int))
 
 
 x_all_test = data.allTest()['xlabels']

@@ -2,6 +2,7 @@ import sklearn
 import numpy as np
 import os 
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import AdaBoostRegressor
 from sklearn.grid_search import GridSearchCV
 from grid_search import grid_search
 from sklearn import cross_validation
@@ -49,23 +50,18 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=10,\
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
                                 test_size=0.1)
 
-ada_class = GridSearchCV(estimator=AdaBoostClassifier(), \
+ada_class = GridSearchCV(estimator=AdaBoostRegressor(), \
     param_grid=dict(parameters), n_jobs=2, cv=num_folds)
+
+# ada_class = AdaBoostClassifier(n_estimators=10, learning_rate=1e0)
 
 ada_class.fit(x1, y1)
 
 print "Training score: "
-print ada_class.score(x1, y1)
+print np.mean(y1 == np.array(ada_class.predict(x1) >= 0.5, dtype=int))
 
 print "Test score : "
-print ada_class.score(x_23, y_23)
-
-
-# cross_val_scores = cross_validation.cross_val_score(estimator=ada_class,\
-#     X=x_train, y=y_train, cv=kf_total, n_jobs=1)
-
-# print "cross val scores: "
-# print cross_val_scores
+print np.mean(y_23 == np.array(ada_class.predict(x_23) >= 0.5, dtype=int))
 
 
 x_all_test = data.allTest()['xlabels']
