@@ -9,8 +9,9 @@ import time
 from grid_search import grid_search
 
 
-def loadModelOut(filename):	
-	return np.loadtxt(filename, delimiter=',', skiprows=1, unpack=True)[1]
+def loadModelOut(filename, model_size):
+	data = np.loadtxt(filename, delimiter=',', skiprows=1, unpack=True)
+    return data[model_size * data.shape[0]:, 1]
 
 trainingDataFiles = [
                      # 'ada_regress_train.csv',
@@ -30,13 +31,15 @@ testDataFiles = [
 				 'svm_regress_test.csv'
 				 ]
 
-y_train = data.loadTraining()['ylabels']
-x_train = np.zeros((len(trainingDataFiles), len(y_train)))
-x_train = np.transpose([loadModelOut(model) for model in trainingDataFiles])
+model_size = 0.7
 
-x_test = np.zeros((len(testDataFiles), len(y_train)))
-x_test = np.transpose([loadModelOut(model) for model in testDataFiles])
+y_blend_train = data.loadTrainingBlend()['ylabels']
+x_blend_train = np.zeros((len(trainingDataFiles), len(y_blend_train)))
+x_blend_train = np.transpose([loadModelOut(model, model_size) for model in trainingDataFiles])
 
+y_all_size = len(data.allTest()['ylabels'])
+x_test = np.zeros((len(testDataFiles), y_all_size))
+x_test = np.transpose([loadModelOut(model, 1) for model in testDataFiles])
 
 
 parameters = {'C': np.logspace(-4.0, 4.0, 20),
@@ -48,16 +51,16 @@ parameters = {'C': np.logspace(-4.0, 4.0, 20),
 
 np.random.seed(int(time.clock()*1000000))
 
-kf_total = cross_validation.KFold(len(x_train), n_folds=5,\
+kf_total = cross_validation.KFold(len(x_blend_train), n_folds=5,\
       shuffle=True)
 
-# x_dev, x_val, y_dev, y_val = cross_validation.train_test_split(x_train, y_train,\
+# x_dev, x_val, y_dev, y_val = cross_validation.train_test_split(x_blend_train, y_blend_train,\
 #                                 test_size=0.33)
 
 # svm_class, val_score = grid_search(SVC(), parameters, x_dev, y_dev, x_val, y_val)
 
 
-# x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
+# x1, x_23, y1, y_23 = cross_validation.train_test_split(x_blend_train, y_blend_train,\
 #                                 test_size=0.2, random_state=datetime.time().second)
 
 # x2, x3, y2, y3 = cross_validation.train_test_split(x_23, y_23,\
@@ -72,12 +75,13 @@ kf_total = cross_validation.KFold(len(x_train), n_folds=5,\
 # print "Test score: "
 # print svm_class.score(x3, y3)
 
-x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
-                                test_size=0.2)
 
-svm_class = SVC(kernel='linear', C=0.05)
+x1, x_23, y1, y_23 = cross_validation.train_test_split(x_blend_train, y_blend_train,\
+                                test_size=0.15, random_state=datetime.time().second)
 
-svm_class.fit(x1, y1)
+svm_class = SVC(kernel='linear', C=0.1)
+
+svm_class.fit(x1, y)
 
 val_score = svm_class.score(x_23, y_23)
 
@@ -87,12 +91,12 @@ print val_score
 # svm_class = GridSearchCV(estimator=SVC(), \
 #     param_grid=dict(parameters), n_jobs=-1, cv=None)
 
-# svm_class.fit(x_train, y_train)
+# svm_class.fit(x_blend_train, y_blend_train)
 
 print 'done fit'
 
 cross_val_scores = cross_validation.cross_val_score(estimator=svm_class,\
-    X=x_train, y=y_train, cv=kf_total, n_jobs=-1)
+    X=x_blend_train, y=y_blend_train, cv=kf_total, n_jobs=-1)
 
 print "cross val scores: "
 print cross_val_scores
@@ -102,7 +106,6 @@ y_test = svm_class.predict(x_test)
 g = open('svm_blend_params.txt', 'w+')
 g.write(str(svm_class.get_params()))
 g.close()
-
 
 f = open('blended_solution.csv', 'w+')
 f.write('Id,Prediction\n')
