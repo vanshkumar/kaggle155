@@ -10,11 +10,12 @@ from grid_search import grid_search
 
 
 def loadModelOut(filename, model_size):
-	data = np.loadtxt(filename, delimiter=',', skiprows=1, unpack=True)
+    data = np.transpose(np.loadtxt(filename, delimiter=',', skiprows=1, unpack=True))
+    # print data.shape
     return data[model_size * data.shape[0]:, 1]
 
 trainingDataFiles = [
-                     # 'ada_regress_train.csv',
+                     'ada_regress_train.csv',
 					 'knn_regress_train.csv', 
 					 'log_regress_train.csv', 
 					 # 'nn_class_train.csv',
@@ -23,7 +24,7 @@ trainingDataFiles = [
 					 ]
 
 testDataFiles = [
-                 # 'ada_regress_test.csv',
+                 'ada_regress_test.csv',
 				 'knn_regress_test.csv', 
 				 'log_regress_test.csv', 
 				 # 'nn_class_test.csv',
@@ -37,10 +38,15 @@ y_blend_train = data.loadTrainingBlend()['ylabels']
 x_blend_train = np.zeros((len(trainingDataFiles), len(y_blend_train)))
 x_blend_train = np.transpose([loadModelOut(model, model_size) for model in trainingDataFiles])
 
-y_all_size = len(data.allTest()['ylabels'])
-x_test = np.zeros((len(testDataFiles), y_all_size))
-x_test = np.transpose([loadModelOut(model, 1) for model in testDataFiles])
+print x_blend_train.shape
+print len(y_blend_train)
 
+x_all = len(data.allTest()['xlabels'])
+print x_all
+x_test = np.zeros((len(testDataFiles), x_all))
+x_test = np.transpose([loadModelOut(model, 0) for model in testDataFiles])
+
+print x_test.shape
 
 parameters = {'C': np.logspace(-4.0, 4.0, 20),
               # 'kernel': ['rbf'],
@@ -77,11 +83,11 @@ kf_total = cross_validation.KFold(len(x_blend_train), n_folds=5,\
 
 
 x1, x_23, y1, y_23 = cross_validation.train_test_split(x_blend_train, y_blend_train,\
-                                test_size=0.15, random_state=datetime.time().second)
+                                test_size=0.15)
 
 svm_class = SVC(kernel='linear', C=0.1)
 
-svm_class.fit(x1, y)
+svm_class.fit(x1, y1)
 
 val_score = svm_class.score(x_23, y_23)
 
