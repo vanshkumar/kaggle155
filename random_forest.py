@@ -16,10 +16,10 @@ y_train = full_train['ylabels']
 full_test  = data.loadTest()
 x_test = full_test['xlabels']
 
-parameters = {'n_estimators': range(3, 10, 3),
+parameters = {'n_estimators': (5, 6, 7),
               # 'criterion': ('gini', 'entropy'),
               # 'max_features': ('auto', 'sqrt', 'log2'),
-              'min_samples_leaf': (30, 250),
+              'min_samples_leaf': range(30, 250, 80),
               'max_depth': (3, 5, 8),
               # 'min_samples_split': (50, 68, 85),
               # 'bootstrap': ('True', 'False')
@@ -55,7 +55,7 @@ x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
                                 test_size=0.1)
 
 rf_class = GridSearchCV(estimator=RandomForestRegressor(), \
-    param_grid=dict(parameters), n_jobs=2, cv=num_folds)
+    param_grid=dict(parameters), n_jobs=4, cv=num_folds)
 
 # rf_class = RandomForestClassifier(n_estimators=5, min_samples_leaf=40)
 

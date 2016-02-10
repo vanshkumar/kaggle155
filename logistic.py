@@ -48,7 +48,7 @@ x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
                                 test_size=0.1)
 
 log_class = GridSearchCV(estimator=LogisticRegression(), \
-    param_grid=dict(parameters), n_jobs=4, cv=num_folds)
+    param_grid=dict(parameters), n_jobs=2, cv=num_folds)
 
 # log_class = LogisticRegression(C=9e-6)
 

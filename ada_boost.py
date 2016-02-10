@@ -51,7 +51,7 @@ x1, x_23, y1, y_23 = cross_validation.train_test_split(x_train, y_train,\
                                 test_size=0.1)
 
 ada_class = GridSearchCV(estimator=AdaBoostRegressor(), \
-    param_grid=dict(parameters), n_jobs=2, cv=num_folds)
+    param_grid=dict(parameters), n_jobs=4, cv=num_folds)
 
 # ada_class = AdaBoostClassifier(n_estimators=10, learning_rate=1e0)
 

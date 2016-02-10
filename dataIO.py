@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
-model_size = 0.7
+model_size = .7
 
 def allTrain():
     # works if the word sentiment folder and kaggle folder are in the same dir
